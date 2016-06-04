@@ -6,12 +6,26 @@ class Calculator(object):
 		self.equation = equation
 
 	def get_chars(self):
-		# nums = re.split('\s*[+-/*]\s*', self.equation)
-		# ops = re.findall('[+-/*]', self.equation)
-		# return nums, ops
-		nums = [float(x) for x in self.equation.split() if x not in ('+', '-', '/', '*')]
-		ops = [x for x in self.equation.split() if x in ('+', '-', '/', '*')]
+		nums = []
+		ops = []
+		num = ''
+		for x in self.equation:
+			if x in ('+', '-', '*', '/'):
+				ops.append(x)
+				nums.append(float(num.strip()))
+				num = ''
+			else:
+				num += x
+		nums.append(float(num.strip()))
 		return nums, ops
+
+	def get_chars2(self):
+		nums = re.split('\s*[+-/]\s*', self.equation)
+		ops = re.findall('[+-/*]', self.equation)
+		return nums, ops
+		# nums = [float(x) for x in self.equation.split() if x not in ('+', '-', '/', '*')]
+		# ops = [x for x in self.equation.split() if x in ('+', '-', '/', '*')]
+		# return nums, ops
 
 	def md(self, nums, ops):
 		idx = 0
@@ -67,6 +81,7 @@ class Calculator(object):
 		return self.calculate_equation(new_nums, new_ops)
 
 
-# s = '1 + 1'
+# s = '1-1.2   /  22 +2.222'
 # c = Calculator(s)
+# print c.get_chars()
 # print c.give_result()

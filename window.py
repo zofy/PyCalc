@@ -3,13 +3,13 @@ from PyQt4 import QtGui, QtCore
 from eqInput import Eq_Input
 
 class CalcWindow(QtGui.QMainWindow):
-	gridX = 30
+	gridX = 70
 	gridY = 85
 
 	def __init__(self):
 		super(CalcWindow, self).__init__()
-		self.setGeometry(450, 250, 500, 300)
-		self.setFixedSize(500, 300)
+		self.setGeometry(450, 250, 300, 300)
+		self.setFixedSize(300, 300)
 		self.setWindowTitle('Calculator')
 		self.setWindowIcon(QtGui.QIcon('logo2.png'))
 		self.num_buttons = self.set_num_buttons()
@@ -41,8 +41,8 @@ class CalcWindow(QtGui.QMainWindow):
 
 	def set_equation_input(self):
 		eq_input = Eq_Input(self)
-		eq_input.resize(300, 40)
-		eq_input.move(100, 30)
+		eq_input.resize(250, 40)
+		eq_input.move(25, 30)
 		eq_input.setLineWrapMode(QtGui.QTextEdit.NoWrap)
 		return eq_input
 

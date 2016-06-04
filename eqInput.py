@@ -1,18 +1,25 @@
 import sys
 import string
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 from calculator import Calculator
 
 class Eq_Input(QtGui.QTextEdit):
-	allowed_chars = {ord(x) for x in string.digits + '+-/*.'}
+	allowed_chars = {ord(x) for x in string.digits + '+-/*. '}
 	allowed_chars.add(16777219)
+	allowed_chars.add(16777234)
+	allowed_chars.add(16777236)
 
 	def __init__(self, *args):
 		QtGui.QTextEdit.__init__(self, *args)
 
 	def keyPressEvent(self, event):
+		modifiers = QtGui.QApplication.keyboardModifiers()
+		if modifiers == QtCore.Qt.ControlModifier and event.key() in (67, 86):
+			QtGui.QTextEdit.keyPressEvent(self, event)
+		if modifiers == QtCore.Qt.ShiftModifier and event.key() in (16777232, 16777233):
+			QtGui.QTextEdit.keyPressEvent(self, event)
+		# print 'You clicked: ' + str(event.key())
 		if event.key() in self.allowed_chars:
-			# print 'You clicked: ' + str(unichr(event.key()))
 			QtGui.QTextEdit.keyPressEvent(self, event)
 		else:
 			event.ignore()
@@ -30,8 +37,6 @@ class Eq_Input(QtGui.QTextEdit):
 
 	def calculate(self):
 		eq = str(self.toPlainText())
-		# print 'Eq: ' + eq
 		c = Calculator(eq)
 		result = c.give_result()
-		# print result
 		return result

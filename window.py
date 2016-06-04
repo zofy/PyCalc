@@ -12,10 +12,24 @@ class CalcWindow(QtGui.QMainWindow):
 		self.setFixedSize(300, 300)
 		self.setWindowTitle('Calculator')
 		self.setWindowIcon(QtGui.QIcon('logo2.png'))
+		self.set_menu()
+
 		self.num_buttons = self.set_num_buttons()
 		self.operators = self.set_operatos()
 		self.eq_input = self.set_equation_input()
 		self.set_actions()
+
+	def set_menu(self):
+		modeAction = QtGui.QAction('&Equation mode', self)
+		modeAction.setShortcut('Ctrl+Q')
+		modeAction.setStatusTip('Change the mode of calculator')
+		modeAction.triggered.connect(self.close)
+
+		self.statusBar()
+
+		mainMenu = self.menuBar()
+		modeMenu = mainMenu.addMenu('&Mode')
+		modeMenu.addAction(modeAction)	
 
 	def set_num_buttons(self):
 		buttons = [QtGui.QPushButton(str(i), self) for i in xrange(10) if i != 0]
@@ -67,7 +81,6 @@ class CalcWindow(QtGui.QMainWindow):
 			event.accept()
 		elif choice == QtGui.QMessageBox.No:
 			event.ignore()
-
 
 def main():
 	app = QtGui.QApplication(sys.argv)

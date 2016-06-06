@@ -12,6 +12,7 @@ class CalcWindow(QtGui.QMainWindow):
 		self.setFixedSize(300, 300)
 		self.setWindowTitle('Calculator')
 		self.setWindowIcon(QtGui.QIcon('logo2.png'))
+		self.modeAction = self.set_mode_action()
 		self.set_menu()
 
 		self.num_buttons = self.set_num_buttons()
@@ -19,17 +20,33 @@ class CalcWindow(QtGui.QMainWindow):
 		self.eq_input = self.set_equation_input()
 		self.set_actions()
 
-	def set_menu(self):
-		modeAction = QtGui.QAction('&Equation mode', self)
+	def check_mode(func):
+		def wraper(self, *args, **kwargs):
+			if self.modeAction.isChecked():
+				print 'Is checked!'
+			else:
+				print 'Note checked!'
+			return func(self)
+		return wraper
+
+
+	def set_mode_action(self):
+		modeAction = QtGui.QAction('&Equation mode', self, checkable=True)
 		modeAction.setShortcut('Ctrl+Q')
 		modeAction.setStatusTip('Change the mode of calculator')
-		modeAction.triggered.connect(self.close)
+		# modeAction.triggered.connect(self.close)
+		modeAction.triggered.connect(self.set_actions)
+		return modeAction
 
+	def set_menu(self):
 		self.statusBar()
 
 		mainMenu = self.menuBar()
 		modeMenu = mainMenu.addMenu('&Mode')
-		modeMenu.addAction(modeAction)	
+		modeMenu.addAction(self.modeAction)	
+
+	def changeMode(self):
+		print self.modeAction.isChecked()
 
 	def set_num_buttons(self):
 		buttons = [QtGui.QPushButton(str(i), self) for i in xrange(10) if i != 0]
@@ -60,6 +77,7 @@ class CalcWindow(QtGui.QMainWindow):
 		eq_input.setLineWrapMode(QtGui.QTextEdit.NoWrap)
 		return eq_input
 
+	@check_mode
 	def set_actions(self):
 		for b in self.num_buttons + self.operators[:len(self.operators) - 2]:
 			b.clicked.connect(self.eq_input.add_to_eq)
@@ -73,6 +91,8 @@ class CalcWindow(QtGui.QMainWindow):
 			print 'Invalid equation!'
 		else:
 			print 'Result: ' + str(result)
+			eq = self.eq_input.toPlainText()
+			self.eq_input.setText(eq + ' = ' + str(result))
 
 	def closeEvent(self, event):
 		choice = QtGui.QMessageBox.question(self, 'Extract!', 'Are you quiting this wonderful app?', QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)

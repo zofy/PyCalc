@@ -18,6 +18,10 @@ class Eq_Input(QtGui.QTextEdit):
 			QtGui.QTextEdit.keyPressEvent(self, event)
 		if modifiers == QtCore.Qt.ShiftModifier and event.key() in (16777232, 16777233):
 			QtGui.QTextEdit.keyPressEvent(self, event)
+		# if user hits enter, result should be calculated
+		if event.key() in (16777220, 16777221) and self.toPlainText() != '':
+			self.calculate()
+
 		# print 'You clicked: ' + str(event.key())
 		if event.key() in self.allowed_chars:
 			QtGui.QTextEdit.keyPressEvent(self, event)
@@ -38,5 +42,10 @@ class Eq_Input(QtGui.QTextEdit):
 	def calculate(self):
 		eq = str(self.toPlainText())
 		c = Calculator(eq)
-		result = c.give_result()
-		return result
+		try:
+			result = c.give_result()
+		except:
+			print 'Invalid eqution'
+		else:
+			eq = self.toPlainText()
+			self.setText(eq + ' = ' + str(result))

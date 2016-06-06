@@ -75,6 +75,8 @@ class Calculator(object):
 		return result
 
 	def give_result(self):
+		if self.equation == '':
+			return 0.0
 		nums, ops = self.get_chars()
 		res = self.md(nums, ops)
 		new_nums, new_ops = self.create_equation(nums, ops, res)

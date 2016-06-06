@@ -82,17 +82,7 @@ class CalcWindow(QtGui.QMainWindow):
 		for b in self.num_buttons + self.operators[:len(self.operators) - 2]:
 			b.clicked.connect(self.eq_input.add_to_eq)
 		self.operators[-1].clicked.connect(self.eq_input.clear_eq)
-		self.operators[-2].clicked.connect(self.calculate)
-
-	def calculate(self):
-		try:
-			result = self.eq_input.calculate()
-		except:
-			print 'Invalid equation!'
-		else:
-			print 'Result: ' + str(result)
-			eq = self.eq_input.toPlainText()
-			self.eq_input.setText(eq + ' = ' + str(result))
+		self.operators[-2].clicked.connect(self.eq_input.calculate)
 
 	def closeEvent(self, event):
 		choice = QtGui.QMessageBox.question(self, 'Extract!', 'Are you quiting this wonderful app?', QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)

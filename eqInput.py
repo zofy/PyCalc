@@ -4,7 +4,7 @@ from PyQt4 import QtGui, QtCore
 from calculator import Calculator
 
 class Eq_Input(QtGui.QTextEdit):
-	allowed_chars = {ord(x) for x in string.digits + '+-/*. '}
+	allowed_chars = {ord(x) for x in string.digits + '+-/*.() '}
 	allowed_chars.add(16777219)
 	allowed_chars.add(16777234)
 	allowed_chars.add(16777236)
@@ -41,9 +41,8 @@ class Eq_Input(QtGui.QTextEdit):
 
 	def calculate(self):
 		eq = str(self.toPlainText())
-		c = Calculator(eq)
 		try:
-			result = c.give_result()
+			result = Calculator.give_result(eq)
 		except:
 			print 'Invalid eqution'
 		else:

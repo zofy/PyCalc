@@ -4,7 +4,8 @@ from PyQt4 import QtGui, QtCore
 from calculator import Calculator
 
 class Eq_Input(QtGui.QTextEdit):
-	allowed_chars = {ord(x) for x in string.digits + '+-/*. '}
+	# digits, operators and some other keys are allowed to be pressed
+	allowed_chars = {ord(x) for x in string.digits + '+-/*.() '}
 	allowed_chars.add(16777219)
 	allowed_chars.add(16777234)
 	allowed_chars.add(16777236)
@@ -14,10 +15,12 @@ class Eq_Input(QtGui.QTextEdit):
 
 	def keyPressEvent(self, event):
 		modifiers = QtGui.QApplication.keyboardModifiers()
+
 		if modifiers == QtCore.Qt.ControlModifier and event.key() in (67, 86):
 			QtGui.QTextEdit.keyPressEvent(self, event)
 		if modifiers == QtCore.Qt.ShiftModifier and event.key() in (16777232, 16777233):
 			QtGui.QTextEdit.keyPressEvent(self, event)
+
 		# if user hits enter, result should be calculated
 		if event.key() in (16777220, 16777221) and self.toPlainText() != '':
 			self.calculate()
@@ -41,9 +44,8 @@ class Eq_Input(QtGui.QTextEdit):
 
 	def calculate(self):
 		eq = str(self.toPlainText())
-		c = Calculator(eq)
 		try:
-			result = c.give_result()
+			result = Calculator.give_result(eq)
 		except:
 			print 'Invalid eqution'
 		else:

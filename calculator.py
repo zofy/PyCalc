@@ -1,89 +1,58 @@
-import re
+from baseCalculator import BaseCalculator
+from rpn import Rpn
 
-class Calculator(object):
+class Calculator(BaseCalculator):
 
-	def __init__(self, equation='0.0'):
-		self.equation = equation
-
-	def get_chars(self):
-		nums = []
-		ops = []
+	@staticmethod
+	def get_eq_list(equation):
+		eq_list = []
 		num = ''
-		for x in self.equation:
-			if x in ('+', '-', '*', '/'):
-				ops.append(x)
-				nums.append(float(num.strip()))
+		for x in equation:
+			if x in ('+', '-', '*', '/', '^', '(', ')'):
+				eq_list.append(num.strip())
+				eq_list.append(x)
 				num = ''
 			else:
 				num += x
-		nums.append(float(num.strip()))
-		return nums, ops
+		eq_list.append(num.strip())
+		return [x for x in eq_list if x != '']
 
-	def get_chars2(self):
-		nums = re.split('\s*[+-/]\s*', self.equation)
-		ops = re.findall('[+-/*]', self.equation)
-		return nums, ops
-		# nums = [float(x) for x in self.equation.split() if x not in ('+', '-', '/', '*')]
-		# ops = [x for x in self.equation.split() if x in ('+', '-', '/', '*')]
-		# return nums, ops
-
-	def md(self, nums, ops):
-		idx = 0
-		result_list = []
-		result = None
-		while idx < len(ops):
-			while idx < len(ops) and ops[idx] in ('/', '*'):
-				if result is None:
-					result = nums[idx]
-				if ops[idx] == '/':
-					result = result / nums[idx + 1]
-				elif ops[idx] == '*':
-					result *= nums[idx + 1]
-				idx += 1
-			if result is not None:
-				result_list.append(result)
-			result = None
-			idx += 1
-		return result_list
-
-	def create_equation(self, nums, ops, res):
-		new_nums = []
-		i = 0
-		j = 0
-		while i < len(ops):
-			if ops[i] in ('+', '-'):
-				new_nums.append(nums[i])
+	@staticmethod
+	def calculate_rpn(rpn_eq):
+		stack = []
+		ops = ('+', '-', '*', '/', '^')
+		for x in rpn_eq:
+			if x in ops:
+				a = float(stack.pop())
+				b = float(stack.pop())
+				if x == '+':
+					r = a + b
+				elif x == '-':
+					r = b - a
+				elif x == '*':
+					r = a * b
+				elif x == '/':
+					r = b / a
+				elif x == '^':
+					r = b**a
+				stack.append(r)
 			else:
-				new_nums.append(res[j])
-				j += 1
-				while i < len(ops) and ops[i] in ('/', '*'):
-					i += 1
-			i += 1
-		if ops[-1] in ('+', '-'):
-			new_nums.append(nums[-1])
-		new_ops = [op for op in ops if op in ('+', '-')]
+				stack.append(x)
+		return stack
 
-		return new_nums, new_ops
-
-	def calculate_equation(self, new_nums, new_ops):
-		result = new_nums[0]
-		for i, op in enumerate(new_ops):
-			if op == '+':
-				result += new_nums[i + 1]
-			elif op == '-':
-				result -= new_nums[i + 1]
-		return result
-
-	def give_result(self):
-		if self.equation == '':
-			return 0.0
-		nums, ops = self.get_chars()
-		res = self.md(nums, ops)
-		new_nums, new_ops = self.create_equation(nums, ops, res)
-		return self.calculate_equation(new_nums, new_ops)
+	@classmethod
+	def give_result(cls, equation):
+		eq_list = cls.get_eq_list(equation)
+		rpn_eq_list = Rpn.to_postfix(eq_list)
+		result = cls.calculate_rpn(rpn_eq_list)
+		if len(result) != 1:
+			raise Exception('Invalid input')
+		return result[0]
 
 
-# s = '1-1.2   /  22 +2.222'
-# c = Calculator(s)
+# s = '(1-1.2)   /  22 +2.222'
+# c = Calculator()
 # print c.get_chars()
-# print c.give_result()
+# print Calculator.get_eq_list(s)
+# print c.give_result(s)
+# print Calculator.give_result(s)

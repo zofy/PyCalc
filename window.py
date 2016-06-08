@@ -25,14 +25,13 @@ class CalcWindow(QtGui.QMainWindow):
 			if self.modeAction.isChecked():
 				print 'Is checked!'
 			else:
-				print 'Not checked!'
+				print 'Note checked!'
 			return func(self)
 		return wraper
 
 
 	def set_mode_action(self):
 		modeAction = QtGui.QAction('&Equation mode', self, checkable=True)
-		modeAction.setChecked(True)
 		modeAction.setShortcut('Ctrl+Q')
 		modeAction.setStatusTip('Change the mode of calculator')
 		# modeAction.triggered.connect(self.close)

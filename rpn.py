@@ -15,7 +15,7 @@ class Rpn(object):
 				output.append(x)
 		while len(stack) != 0:
 			output.append(stack.pop())
-		return output
+		return [x for x in output if x not in ('(', ')')]
 
 	@classmethod
 	def test(cls, x, stack, output):
@@ -43,4 +43,5 @@ class Rpn(object):
 
 
 # eq = '5+(6*2-2)*9+3^(7-1)'
-# print Rpn.to_postfix(eq)
+eq = '((((1+2)))'
+print Rpn.to_postfix(eq)

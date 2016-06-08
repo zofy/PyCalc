@@ -41,7 +41,7 @@ class Calculator(BaseCalculator):
 				stack.append(r)
 			else:
 				stack.append(x)
-		print stack
+		# print stack
 		return stack
 
 	@classmethod
@@ -50,6 +50,7 @@ class Calculator(BaseCalculator):
 		rpn_eq_list = Rpn.to_postfix(eq_list)
 		result = cls.calculate_rpn(rpn_eq_list)
 		if len(result) != 1:
+			print result
 			raise Exception('Invalid input!')
 		return result[0]
 

@@ -9,8 +9,28 @@ class Eq_Input(QtGui.QTextEdit):
 	allowed_chars.add(16777234)
 	allowed_chars.add(16777236)
 
-	def __init__(self, *args):
+	def __init__(self, *args, **kwargs):
 		QtGui.QTextEdit.__init__(self, *args)
+		self.mode = 'normal'
+
+	@property
+	def mode(self):
+		return self._mode
+
+	@mode.setter
+	def mode(self, value):
+		if value in ('normal', 'equation'):
+			self._mode = value
+		else:
+			raise Exception('Mode does not exist!')
+
+	def check_mode(func):
+		def wraper(self, *args, **kwargs):
+			if self.mode == 'equation':
+				return func(self)
+			elif self.mode == 'normal':
+				return self.add_to_eq()
+		return wraper
 
 	def keyPressEvent(self, event):
 		modifiers = QtGui.QApplication.keyboardModifiers()
@@ -29,16 +49,22 @@ class Eq_Input(QtGui.QTextEdit):
 			event.ignore()
 
 	def add_to_eq(self):
+		print self.mode
 		b = self.sender()
+		
 		eq = self.toPlainText()
-		if b.text() in ('+', '-', '*', '/'):
+		if self.mode == 'equation' and b.text() in ('+', '-', '*', '/'):
 			self.setText(eq + ' ' + str(b.text()) + ' ')
+		elif self.mode == 'normal' and b.text() in ('+', '-', '*', '/', '='):
+			result = Calculator.calculate_operation(eq, b.text())
+			self.setText(str(result))
 		else:
 			self.setText(eq + str(b.text()))
 
 	def clear_eq(self):
 		self.setText('')
 
+	@check_mode
 	def calculate(self):
 		eq = str(self.toPlainText())
 		try:

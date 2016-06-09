@@ -20,23 +20,13 @@ class CalcWindow(QtGui.QMainWindow):
 		self.eq_input = self.set_equation_input()
 		self.set_actions()
 
-	def check_mode(func):
-		def wraper(self, *args, **kwargs):
-			if self.modeAction.isChecked():
-				print 'Is checked!'
-			else:
-				print 'Not checked!'
-			return func(self)
-		return wraper
-
-
 	def set_mode_action(self):
 		modeAction = QtGui.QAction('&Equation mode', self, checkable=True)
-		modeAction.setChecked(True)
+		modeAction.setChecked(False)
 		modeAction.setShortcut('Ctrl+Q')
 		modeAction.setStatusTip('Change the mode of calculator')
 		# modeAction.triggered.connect(self.close)
-		modeAction.triggered.connect(self.set_actions)
+		modeAction.triggered.connect(self.change_mode)
 		return modeAction
 
 	def set_menu(self):
@@ -46,8 +36,21 @@ class CalcWindow(QtGui.QMainWindow):
 		modeMenu = mainMenu.addMenu('&Mode')
 		modeMenu.addAction(self.modeAction)	
 
-	def changeMode(self):
-		print self.modeAction.isChecked()
+	# changing mode of calc, in case modes were changed or smth - it should work fine
+	def change_mode(self):
+		isChecked = self.modeAction.isChecked()
+		modes = ('normal', 'equation')
+		try:
+			self.eq_input._mode = modes[int(isChecked)]
+		except:
+			print 'Error in setting mode of calculator!'
+			if isChecked:
+				self.modeAction.setChecked(False)
+			else:
+				self.modeAction.setChecked(True)
+		else:
+			# if everything goes fine we change the mode and clear the input
+			self.eq_input.setText('')
 
 	def set_num_buttons(self):
 		buttons = [QtGui.QPushButton(str(i), self) for i in xrange(10) if i != 0]
@@ -78,7 +81,6 @@ class CalcWindow(QtGui.QMainWindow):
 		eq_input.setLineWrapMode(QtGui.QTextEdit.NoWrap)
 		return eq_input
 
-	@check_mode
 	def set_actions(self):
 		for b in self.num_buttons + self.operators[:len(self.operators) - 2]:
 			b.clicked.connect(self.eq_input.add_to_eq)

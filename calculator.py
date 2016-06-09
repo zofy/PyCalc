@@ -41,7 +41,6 @@ class Calculator(BaseCalculator):
 				stack.append(r)
 			else:
 				stack.append(x)
-		# print stack
 		return stack
 
 	@classmethod

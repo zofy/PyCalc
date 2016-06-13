@@ -7,6 +7,20 @@ class Calculator(BaseCalculator):
 		# self.equation = equation
 
 	@staticmethod
+	def refactor(equation):
+		print equation
+		output = ''
+		for i, x in enumerate(equation):
+			if x in ('+', '-'):
+				if i == 0 or equation[i - 1] in ('+', '-') or equation[i + 1] == '(':
+					output += x+'1*'
+				else:
+					output += x
+			else:
+				output += x
+		return output
+
+	@staticmethod
 	def get_eq_list(equation):
 		eq_list = []
 		num = ''
@@ -44,7 +58,7 @@ class Calculator(BaseCalculator):
 		return stack
 
 	@classmethod
-	def give_result(cls, equation):
+	def calculate_equation(cls, equation):
 		eq_list = cls.get_eq_list(equation)
 		rpn_eq_list = Rpn.to_postfix(eq_list)
 		result = cls.calculate_rpn(rpn_eq_list)
@@ -56,4 +70,8 @@ class Calculator(BaseCalculator):
 
 # s = '(1-1.2)   /  22 +2.222'
 # s = '5+(6*2-2)*9+3^(7-1)'
+s = '-(1+2)+((0)+-(2+-1)-(1)'
+s = '(2+-1)--1'
+print Calculator.refactor(s)
+# print Calculator.get_eq_list(s)
 # print Calculator.give_result(s)

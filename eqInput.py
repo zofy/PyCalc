@@ -12,6 +12,8 @@ class Eq_Input(QtGui.QTextEdit):
 	def __init__(self, *args, **kwargs):
 		QtGui.QTextEdit.__init__(self, *args)
 		self.mode = 'normal'
+		self.calc = Calculator()
+		self.bool = False
 
 	@property
 	def mode(self):
@@ -56,19 +58,26 @@ class Eq_Input(QtGui.QTextEdit):
 		if self.mode == 'equation' and b.text() in ('+', '-', '*', '/'):
 			self.setText(eq + ' ' + str(b.text()) + ' ')
 		elif self.mode == 'normal' and b.text() in ('+', '-', '*', '/', '='):
-			result = Calculator.calculate_operation(eq, b.text())
+			result = self.calc.calculate_operation(str(b.text()), float(self.toPlainText()))
 			self.setText(str(result))
+			self.bool = True
+		elif self.mode == 'normal' and self.bool:
+			self.setText(str(b.text()))
+			self.bool = False
+		elif self.mode == 'normal' and not self.bool:
+			self.setText(eq + str(b.text()))
 		else:
 			self.setText(eq + str(b.text()))
 
 	def clear_eq(self):
 		self.setText('')
+		self.calc.actual_value = None
 
 	@check_mode
 	def calculate(self):
 		eq = str(self.toPlainText())
 		try:
-			result = Calculator.give_result(eq)
+			result = Calculator.calculate_equation(eq)
 		except:
 			print 'Invalid eqution'
 		else:

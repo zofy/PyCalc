@@ -42,6 +42,7 @@ class CalcWindow(QtGui.QMainWindow):
 		modes = ('normal', 'equation')
 		try:
 			self.eq_input._mode = modes[int(isChecked)]
+			self.eq_input.setText('0')
 		except:
 			print 'Error in setting mode of calculator!'
 			if isChecked:

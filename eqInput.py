@@ -13,7 +13,7 @@ class Eq_Input(QtGui.QTextEdit):
 		QtGui.QTextEdit.__init__(self, *args)
 		self.mode = 'normal'
 		self.calc = Calculator()
-		self.bool = False
+		self.addNumber = True
 
 	@property
 	def mode(self):
@@ -50,28 +50,37 @@ class Eq_Input(QtGui.QTextEdit):
 		else:
 			event.ignore()
 
-	def add_to_eq(self):
-		print self.mode
-		b = self.sender()
-		
-		eq = self.toPlainText()
-		if self.mode == 'equation' and b.text() in ('+', '-', '*', '/'):
-			self.setText(eq + ' ' + str(b.text()) + ' ')
-		elif self.mode == 'normal' and b.text() in ('+', '-', '*', '/', '='):
-			result = self.calc.calculate_operation(str(b.text()), float(self.toPlainText()))
-			self.setText(str(result))
-			self.bool = True
-		elif self.mode == 'normal' and self.bool:
-			self.setText(str(b.text()))
-			self.bool = False
-		elif self.mode == 'normal' and not self.bool:
-			self.setText(eq + str(b.text()))
+	def equation_addition(self, sender, eq):
+		if sender in ('+', '-', '*', '/'):
+			self.setText(eq + ' ' + str(sender) + ' ')
 		else:
-			self.setText(eq + str(b.text()))
+			self.setText(eq + str(sender))
+
+	def normal_addition(self, sender, eq):
+		if sender in ('+', '-', '*', '/', '='):
+			if eq == '':
+				result = self.calc.calculate_operation(str(sender), 0)
+			else:
+				result = self.calc.calculate_operation(str(sender), float(eq))
+			self.setText(str(result))
+			self.addNumber = False
+		elif not self.addNumber:
+			self.setText(str(sender))
+			self.addNumber = True
+		elif self.addNumber:
+			self.setText(eq + str(sender))
+
+	def add_to_eq(self):
+		eq = self.toPlainText()
+		if self.mode == 'normal':
+			self.normal_addition(self.sender().text(), eq)
+		elif self.mode == 'equation':
+			self.equation_addition(self.sender().text(), eq)
 
 	def clear_eq(self):
 		self.setText('')
 		self.calc.actual_value = None
+		self.calc.clear_operators()
 
 	@check_mode
 	def calculate(self):

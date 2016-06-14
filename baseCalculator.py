@@ -11,7 +11,6 @@ class BaseCalculator(object):
 
 	def __init__(self):
 		self.actual_value, self.op = None, []
-		self.result = 0
 
 	@property
 	def actual_value(self):
@@ -19,18 +18,30 @@ class BaseCalculator(object):
 
 	@actual_value.setter
 	def actual_value(self, value):
-		self._actual_value = value
+		try:
+			if value is not None:
+				value = float(value)
+		except:
+			raise Exception('Value must be a number or None')
+		else:
+			self._actual_value = value
+
+	def clear_operators(self):
+		self.op = []
 
 	def calculate_operation(self, op, value):
 		if self.actual_value is None:
+			if op == '=':
+				return value
 			self.actual_value = value
 			self.op = [op] + self.op
 		else:
 			if op == '=':
-				self.op = self.op[-1] + self.op
-			else:
-				self.op = [op] + self.op
-				print self.actual_value, value
-				self.actual_value = self.ops[self.op.pop()](self.actual_value, value)
+				r, self.actual_value = self.actual_value, None
+				if self.op == []:
+					return r
+				return self.ops[self.op.pop()](r, value)	
+			self.op = [op] + self.op
+			self.actual_value = self.ops[self.op.pop()](self.actual_value, value)
 
 		return self.actual_value

@@ -86,7 +86,7 @@ class CalcWindow(QtGui.QMainWindow):
 		for b in self.num_buttons + self.operators[:len(self.operators) - 2]:
 			b.clicked.connect(self.eq_input.add_to_eq)
 		self.operators[-1].clicked.connect(self.eq_input.clear_eq)
-		self.operators[-2].clicked.connect(self.eq_input.calculate)
+		self.operators[-2].clicked.connect(self.eq_input.show_result)
 
 	def closeEvent(self, event):
 		choice = QtGui.QMessageBox.question(self, 'Extract!', 'Are you quiting this wonderful app?', QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)

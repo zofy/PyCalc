@@ -4,7 +4,8 @@ from PyQt4 import QtGui, QtCore
 from calculator import Calculator
 
 class Eq_Input(QtGui.QTextEdit):
-	allowed_chars = {ord(x) for x in string.digits + '+-/*.() '}
+	operators = {ord(x): x for x in '+-*/^'}
+	allowed_chars = {ord(x) for x in string.digits + '+-*/^.() '}
 	allowed_chars.add(16777219)
 	allowed_chars.add(16777234)
 	allowed_chars.add(16777236)
@@ -26,14 +27,6 @@ class Eq_Input(QtGui.QTextEdit):
 		else:
 			raise Exception('Mode does not exist!')
 
-	def check_mode(func):
-		def wraper(self, *args, **kwargs):
-			if self.mode == 'equation':
-				return func(self)
-			elif self.mode == 'normal':
-				return self.add_to_eq()
-		return wraper
-
 	def keyPressEvent(self, event):
 		modifiers = QtGui.QApplication.keyboardModifiers()
 		if modifiers == QtCore.Qt.ControlModifier and event.key() in (67, 86):
@@ -42,11 +35,17 @@ class Eq_Input(QtGui.QTextEdit):
 			QtGui.QTextEdit.keyPressEvent(self, event)
 		# if user hits enter, result should be calculated
 		if event.key() in (16777220, 16777221) and self.toPlainText() != '':
-			self.calculate()
+			if self.mode == 'normal':
+				self.normal_addition('=', self.toPlainText())
+			else:
+				self.show_result()
 
 		# print 'You clicked: ' + str(event.key())
 		if event.key() in self.allowed_chars:
-			QtGui.QTextEdit.keyPressEvent(self, event)
+			if self.mode == 'normal' and event.key() in self.operators:
+				self.normal_addition(self.operators[event.key()], self.toPlainText())
+			elif self.mode == 'equation' or (self.mode == 'normal' and event.key() not in (ord('('), ord(')'), ord(' '))):
+				QtGui.QTextEdit.keyPressEvent(self, event)
 		else:
 			event.ignore()
 
@@ -82,13 +81,15 @@ class Eq_Input(QtGui.QTextEdit):
 		self.calc.actual_value = None
 		self.calc.clear_operators()
 
-	@check_mode
-	def calculate(self):
+	def show_result(self):
 		eq = str(self.toPlainText())
-		try:
-			result = Calculator.calculate_equation(eq)
-		except:
-			print 'Invalid eqution'
-		else:
-			eq = self.toPlainText()
-			self.setText(eq + ' = ' + str(result))
+		if self.mode == 'equation':
+			try:
+				result = self.calc.calculate_equation(eq)
+			except:
+				print 'Invalid eqution'
+			else:
+				eq = self.toPlainText()
+				self.setText(eq + ' = ' + str(result))
+		elif self.mode == 'normal':
+			self.normal_addition(self.sender().text(), eq)

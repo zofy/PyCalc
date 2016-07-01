@@ -45,3 +45,14 @@ class BaseCalculator(object):
 			self.actual_value = self.ops[self.op.pop()](self.actual_value, value)
 
 		return self.actual_value
+
+	def calculate(self, op, num):
+		self.operators = [op] + self.operators
+		if self.nums == []:
+			self.nums.append(num)
+			self.res = num
+		elif len(self.nums) == 1:
+			self.res = self.ops[self.operators.pop()](self.nums[0], num)
+			self.nums.pop()
+			self.nums[0] = self.res			
+		return self.res

@@ -12,15 +12,17 @@ class CalcWindow(QtGui.QMainWindow):
 		self.setFixedSize(300, 300)
 		self.setWindowTitle('Calculator')
 		self.setWindowIcon(QtGui.QIcon('logo2.png'))
-		self.modeAction = self.set_mode_action()
-		self.set_menu()
 
 		self.num_buttons = self.set_num_buttons()
 		self.operators = self.set_operatos()
 		self.eq_input = self.set_equation_input()
 		self.set_actions()
 
+		self.modeAction = self.set_mode_action()
+		self.set_menu()
+
 	def set_mode_action(self):
+		self.eq_input.mode = 'normal'
 		modeAction = QtGui.QAction('&Equation mode', self, checkable=True)
 		modeAction.setChecked(False)
 		modeAction.setShortcut('Ctrl+Q')
@@ -41,7 +43,7 @@ class CalcWindow(QtGui.QMainWindow):
 		isChecked = self.modeAction.isChecked()
 		modes = ('normal', 'equation')
 		try:
-			self.eq_input._mode = modes[int(isChecked)]
+			self.eq_input.mode = modes[int(isChecked)]
 			self.eq_input.setText('0')
 		except:
 			print 'Error in setting mode of calculator!'
@@ -83,10 +85,10 @@ class CalcWindow(QtGui.QMainWindow):
 		return eq_input
 
 	def set_actions(self):
-		for b in self.num_buttons + self.operators[:len(self.operators) - 2]:
-			b.clicked.connect(self.eq_input.add_to_eq)
+		for b in self.num_buttons + self.operators[:len(self.operators) - 1]:
+			b.clicked.connect(self.eq_input.write_to_input)
 		self.operators[-1].clicked.connect(self.eq_input.clear_eq)
-		self.operators[-2].clicked.connect(self.eq_input.show_result)
+		# self.operators[-2].clicked.connect(self.eq_input.show_result)
 
 	def closeEvent(self, event):
 		choice = QtGui.QMessageBox.question(self, 'Extract!', 'Are you quiting this wonderful app?', QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)

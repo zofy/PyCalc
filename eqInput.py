@@ -74,6 +74,8 @@ class Eq_Input(QtGui.QTextEdit):
 			num = self.toPlainText()
 
 			if not self.ready_to_calculate:
+				if key not in (16777220, 16777221, ord('=')):
+					self.calc.set_operator(unichr(key))
 				return
 
 			if key in self.operators:

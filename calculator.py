@@ -105,10 +105,11 @@ class Calculator(BaseCalculator):
 			eq_list = self.get_eq_list(equation)
 			rpn_list = Rpn.to_postfix(eq_list)
 			result = self.calculate_rpn(rpn_list)
+			return result[0]
 		except:
 			raise Exception('Invalid equation')
-		else:
-			return result[0]
+		# else:
+			# return result[0]
 
 
 # s = '(1-1.2)   /  22 +2.222'

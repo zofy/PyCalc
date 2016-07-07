@@ -23,6 +23,7 @@ class Eq_Input(QtGui.QTextEdit):
 
 	@mode.setter
 	def mode(self, value):
+		self.calc.clear()
 		if value == 'normal':
 			self._mode = value
 			self.allowed_chars = self.normal_chars
@@ -70,11 +71,17 @@ class Eq_Input(QtGui.QTextEdit):
 		self.add_to_eq(key)
 
 	def add_to_eq(self, key):
+		eq = str(self.toPlainText())
+		if eq == '': 
+			eq = '0'
+			self.setText('0')
+
 		if self.mode == 'normal':
-			num = self.toPlainText()
+			num = eq
 
 			if not self.ready_to_calculate:
-				if key not in (16777220, 16777221, ord('=')):
+				# if key not in (16777220, 16777221, ord('=')):
+				if key in self.operators:
 					self.calc.set_operator(unichr(key))
 				return
 
@@ -85,7 +92,6 @@ class Eq_Input(QtGui.QTextEdit):
 
 		if self.mode == 'equation':
 			if key in (16777220, 16777221, ord('=')):
-				eq = str(self.toPlainText())
 				self.show_result(self.calc.calculate_equation(eq))
 
 	def clear_eq(self):

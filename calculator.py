@@ -108,8 +108,6 @@ class Calculator(BaseCalculator):
 			return result[0]
 		except:
 			raise Exception('Invalid equation')
-		# else:
-			# return result[0]
 
 
 # s = '(1-1.2)   /  22 +2.222'

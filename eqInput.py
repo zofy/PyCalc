@@ -70,6 +70,17 @@ class Eq_Input(QtGui.QTextEdit):
 
 		self.add_to_eq(key)
 
+	def do_calculation(self, eq):
+		num = eq
+		try:
+			if self.mode == 'normal':
+				self.show_result(self.calc.calculate('=', float(num)))
+			elif self.mode == 'equation':
+				self.show_result(self.calc.calculate_equation(eq))
+		except:
+			print('Invalid input!')
+
+
 	def add_to_eq(self, key):
 		eq = str(self.toPlainText())
 		if eq == '': 
@@ -88,11 +99,11 @@ class Eq_Input(QtGui.QTextEdit):
 			if key in self.operators:
 				self.show_result(self.calc.calculate(unichr(key), float(num)))
 			elif key in (16777220, 16777221, ord('=')):
-				self.show_result(self.calc.calculate('=', float(num)))
+				self.do_calculation(num)
 
 		if self.mode == 'equation':
 			if key in (16777220, 16777221, ord('=')):
-				self.show_result(self.calc.calculate_equation(eq))
+				self.do_calculation(eq)
 
 	def clear_eq(self):
 		self.setText('')

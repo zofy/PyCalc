@@ -8,6 +8,8 @@ For solving equations PyCalc uses reverse polish notation.
 
 git clone https://github.com/zofy/PyCalc.git projectname && cd projectname
 
+or simply: pip install pycalculator
+
 ###Run
 
 Just run window.py. (Distribution for windows is on the way)
